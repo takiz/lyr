@@ -114,7 +114,7 @@ func GetSL() bool {
 		if end := strings.Index(s1, `</p>`); end != -1 {
 			if !strings.Contains(s1[:end], "Sorry, we have no") {
 				r := strings.NewReplacer("&quot;", "\"", "<br />", "",
-					`&#039;`, "'")
+					`&#039;`, "'", "&amp;amp;amp;amp;amp;#039;", "'")
 
 				fmt.Println(r.Replace(s1[:end]))
 				return true
