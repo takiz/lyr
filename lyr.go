@@ -112,7 +112,8 @@ func GetSL() bool {
 	if i := strings.Index(str, `songLyricsV14 iComment-text">`); i != -1 {
 		s1 := str[i+29:]
 		if end := strings.Index(s1, `</p>`); end != -1 {
-			if !strings.Contains(s1[:end], "Sorry, we have no") {
+			if !strings.Contains(s1[:end], "Sorry, we have no") &&
+				!strings.Contains(s1[:end], "do not have the lyrics") {
 				r := strings.NewReplacer("&quot;", "\"", "<br />", "",
 					`&#039;`, "'", "&amp;amp;amp;amp;amp;#039;", "'")
 
