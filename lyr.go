@@ -75,10 +75,7 @@ func GetLyr() bool {
 		if i := strings.Index(str, `<pre id="lyric-body-text`); i != -1 {
 			s1 := str[i:]
 			if j := strings.Index(s1, `</pre>`); j != -1 {
-				s2 := s1[:j]
-				reg := regexp.MustCompile("<[^>]*>")
-				res := reg.ReplaceAllString(s2, "")
-				fmt.Println(res)
+				fmt.Println(StripTags(s1[:j]))
 				return true
 			}
 		}
@@ -172,12 +169,17 @@ func GetGenius() bool {
 		if start := strings.Index(s1, `<p>`); start != -1 {
 			s2 := s1[start+3:]
 			if end := strings.Index(s2, `</p>`); end != -1 {
-				fmt.Println(strings.ReplaceAll(s2[:end], "<br>", ""))
+				fmt.Println(StripTags(s2[:end]))
 				return true
 			}
 		}
 	}
 	return false
+}
+
+func StripTags(s string) string {
+	reg := regexp.MustCompile("<[^>]*>")
+	return reg.ReplaceAllString(s, "")
 }
 
 func Get(Url string) string {
