@@ -28,7 +28,7 @@ func main() {
 
 	res := GetSL() || GetWikia() || GetGenius() || GetMA() || GetMega() || GetMania() || GetLyr()
 	if !res {
-		fmt.Println("Nothing Found")
+		fmt.Fprintf(os.Stderr, "Nothing Found\n")
 	}
 }
 
