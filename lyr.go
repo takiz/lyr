@@ -26,7 +26,7 @@ func main() {
 	t, _ := url.QueryUnescape(os.Args[2])
 	Title = strings.ToLower(t)
 
-	res := GetSL() || GetWikia() || GetGenius() || GetMA() || GetMega() || GetMania() || GetLyr()
+	res := GetSL() || GetWikia() || GetGenius() || GetMM() || GetMA() || GetMega() || GetMania() || GetLyr()
 	if !res {
 		fmt.Fprintf(os.Stderr, "Nothing Found\n")
 	}
@@ -102,7 +102,7 @@ func GetMega() bool {
 }
 
 func GetSL() bool {
-	rep := strings.NewReplacer("_", "-", " ", "-")
+	rep := strings.NewReplacer("_", "-", " ", "-", "'", "-", "&", "and")
 	Url := "http://www.songlyrics.com/" + rep.Replace(Artist+"/"+Title) + "-lyrics/"
 
 	str := Get(Url)
@@ -160,7 +160,7 @@ func GetMA() bool {
 }
 
 func GetGenius() bool {
-	rep := strings.NewReplacer("_", "-", " ", "-")
+	rep := strings.NewReplacer("_", "-", " ", "-", "'", "", "&", "and")
 	Url := "https://genius.com/" + rep.Replace(Artist+"-"+Title) + "-lyrics"
 
 	str := Get(Url)
@@ -180,6 +180,42 @@ func GetGenius() bool {
 func StripTags(s string) string {
 	reg := regexp.MustCompile("<[^>]*>")
 	return reg.ReplaceAllString(s, "")
+}
+
+func GetMM() bool {
+	var ret bool
+	rep := strings.NewReplacer("_", "-", " ", "-", "'", "-", "&", "and")
+	Url := "https://www.musixmatch.com/lyrics/" + rep.Replace(Artist+"/"+Title)
+	okStr := `lyrics__content__ok">`
+	errorStr := `lyrics__content__error">`
+
+	str := Get(Url)
+
+	parse := func(i int, fStr string, ok bool) bool {
+		var textFirstPart string
+		k := len(fStr)
+		s := str[i+k:]
+		if j := strings.Index(s, `</span`); j != 1 {
+			textFirstPart = s[:j]
+		}
+		start := strings.Index(s, fStr)
+		end := strings.Index(s, `lyrics-report"`)
+		if start != -1 && end != -1 {
+			fmt.Println("GetMM")
+			fmt.Println(textFirstPart)
+			fmt.Println(s[start+k : end-58])
+			return true
+		}
+		return false
+	}
+
+	if i := strings.Index(str, okStr); i != -1 {
+		ret = parse(i, okStr, true)
+	} else if i := strings.Index(str, errorStr); i != -1 {
+		ret = parse(i, errorStr, false)
+	}
+
+	return ret
 }
 
 func Get(Url string) string {
