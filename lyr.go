@@ -201,7 +201,6 @@ func GetMM() bool {
 		start := strings.Index(s, fStr)
 		end := strings.Index(s, `lyrics-report"`)
 		if start != -1 && end != -1 {
-			fmt.Println("GetMM")
 			fmt.Println(textFirstPart)
 			fmt.Println(s[start+k : end-58])
 			return true
